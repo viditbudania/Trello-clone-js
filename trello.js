@@ -1,11 +1,11 @@
-let key = "5faed5e4da997405925813595071a24a";
-let token = "0e4552d74e22a4b469be62aed5ce3c6bebb94cd20add47f16587fc0ff37ccc6e";
-let boardId = "9K1lhWei";
-let boardIdList = "5d233ce8cc32b616f29ac0aa";
+let key = "";
+let token = "";
+let boardId = "";
+let boardIdList = "";
 
 
 function refresh() {
-    fetch('https://api.trello.com/1/boards/9K1lhWei?actions=all&boardStars=none&cards=none&card_pluginData=false&checklists=none&customFields=false&fields=name%2Cdesc%2CdescData%2Cclosed%2CidOrganization%2Cpinned%2Curl%2CshortUrl%2Cprefs%2ClabelNames&lists=open&members=none&memberships=none&membersInvited=none&membersInvited_fields=all&pluginData=false&organization=false&organization_pluginData=false&myPrefs=false&tags=false&key=5faed5e4da997405925813595071a24a&token=0e4552d74e22a4b469be62aed5ce3c6bebb94cd20add47f16587fc0ff37ccc6e').then((boardData) => {
+    fetch(`https://api.trello.com/1/boards/${boardId}?actions=all&boardStars=none&cards=none&card_pluginData=false&checklists=none&customFields=false&fields=name%2Cdesc%2CdescData%2Cclosed%2CidOrganization%2Cpinned%2Curl%2CshortUrl%2Cprefs%2ClabelNames&lists=open&members=none&memberships=none&membersInvited=none&membersInvited_fields=all&pluginData=false&organization=false&organization_pluginData=false&myPrefs=false&tags=false&key=${key}&token=${token}`).then((boardData) => {
         return boardData.json()
     }).then((boardData) => {
         boardName(boardData)
@@ -39,7 +39,7 @@ function deletingNode(parentNode) {
 async function cardAdd() {
     let input = document.getElementById('input').value
     document.getElementById('input').value = '';
-    await fetch(`https://api.trello.com/1/cards?name=${input}&pos=bottom&idList=5d233ce8cc32b616f29ac0aa&keepFromSource=all&key=5faed5e4da997405925813595071a24a&token=0e4552d74e22a4b469be62aed5ce3c6bebb94cd20add47f16587fc0ff37ccc6e`, {
+    await fetch(`https://api.trello.com/1/cards?name=${input}&pos=bottom&idList=5d233ce8cc32b616f29ac0aa&keepFromSource=all&key=${key}&token=${token}`, {
         method: 'post'
     })
     let cardList = document.getElementById("list");
@@ -50,7 +50,7 @@ async function cardAdd() {
 }
 
 async function archiveCard(id) {
-    await fetch(`https://api.trello.com/1/cards/${id}?closed=true&key=5faed5e4da997405925813595071a24a&token=0e4552d74e22a4b469be62aed5ce3c6bebb94cd20add47f16587fc0ff37ccc6e`, {
+    await fetch(`https://api.trello.com/1/cards/${id}?closed=true&key=${key}&token=${token}`, {
         method: 'PUT'
     })
     let cardList = document.getElementById("list");
