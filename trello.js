@@ -118,7 +118,10 @@ function addingItemsInCard(cardList, boardCards) {
 
     let div2 = document.createElement('div')
     let inputbox = document.createElement('input')
+    // document.getElementsByTagName('input').value = " ";
     inputbox.className = "checkList-input"
+    // document.querySelector('.checkList-input').value="";
+    // document.getElementsByClassName('checkList-input') = '';
     let checklistButtonAdd = document.createElement('button')
     checklistButtonAdd.className = "btn btn-outline-primary"
     let checkListButtonName = document.createTextNode('add Checklist')
@@ -132,6 +135,7 @@ function addingItemsInCard(cardList, boardCards) {
         if (event.target.tagName == 'BUTTON') {
 
             let checkListNAme = event.target.parentNode.children[0].value
+            event.target.parentNode.children[0].value=" "
             let parentNode = document.getElementById('pop-up').children[0]
             createCheckList(targetCardId, checkListNAme, parentNode);
         }
@@ -141,12 +145,12 @@ function addingItemsInCard(cardList, boardCards) {
 }
 
 function addChecklist(cardId) {
-    fetch(`https://api.trello.com/1/cards/${cardId}/checklists?checkItems=all&checkItem_fields=name%2CnameData%2Cpos%2Cstate&filter=all&fields=all&key=5faed5e4da997405925813595071a24a&token=0e4552d74e22a4b469be62aed5ce3c6bebb94cd20add47f16587fc0ff37ccc6e`)
+    fetch(`https://api.trello.com/1/cards/${cardId}/checklists?key=${key}&token=${token}`)
         .then((checklists) => {
             return checklists.json()
         })
         .then((checklists) => {
-            console.log(checklists)
+           // console.log(checklists)
             addingChecklist(checklists)
         })
 }
@@ -172,9 +176,13 @@ function addingChecklist(checklists) {
     let div = document.getElementById('pop-up').children[0]
 
     checklists.forEach(checklist => {
-        console.log(checklist, "checklist")
+        //console.log(checklist, "checklist")
         let checklistId = checklist['id']
         let checklistDiv = document.createElement('div')
+        
+        let checkListOl = document.createElement('ol')
+       
+        checklistDiv.className = 'list-container'
 
         let ItemInput = document.createElement('input')
         ItemInput.className = "checkList-input"
@@ -184,21 +192,22 @@ function addingChecklist(checklists) {
         let addButton = document.createElement('button')
         addButton.className = "btn btn-outline-primary"
         let addButtonText = document.createTextNode("add items")
+
         addButton.appendChild(addButtonText)
+        
         button.appendChild(buttonText);
         let text = document.createTextNode(checklist['name'])
         checklistDiv.appendChild(text)
-        checklistDiv.appendChild(ItemInput)
-        checklistDiv.appendChild(addButton)
-        checklistDiv.appendChild(button)
-
-
-        let checkListOl = document.createElement('ol')
         checklistDiv.appendChild(checkListOl)
-        checklistDiv.className = 'list-container'
-
+        checklistDiv.appendChild(ItemInput)
+        
+        checklistDiv.appendChild(addButton)
+        checklistDiv.appendChild(button)  
+            
+        
         div.appendChild(checklistDiv)
-        addingItems(checklistId, checkListOl)
+       // div1.appendChild(div)
+        addingItems(checklistId, checkListOl) 
     });
     div.addEventListener('click', function () {
         if (event.target.tagName == 'INPUT') {
@@ -225,14 +234,15 @@ function addingChecklist(checklists) {
             }
         } else if (event.target.tagName == 'BUTTON') {
             if (event.target.innerText == 'add items') {
-                itemName = event.target.parentNode.children[0].value
+                itemName = event.target.parentNode.children[1].value
+                event.target.parentNode.children[1].value=" ";
                 let olNode = event.target.parentNode.children[0];
                 //console.log(olNode)
                 let checklistNode = event.target.parentNode.parentNode
 
                 var index = Array.from(checklistNode.children).indexOf(event.target.parentNode)
                 console.log(index)
-                console.log(checklists[index])
+                console.log(checklists)
                 checklistId = checklists[index]['id']
                 postItems(itemName, checklistId, olNode);
             }
@@ -282,8 +292,8 @@ async function updateItemlist(IdCard, itemId, status, checklists, parentNode) {
     }
     deletingNode(parentNode)
     addingChecklist(checklists)
-
 }
+
 async function deleteChecklist(checklistId, parentCheckList, checklists) {
     await fetch(`https://api.trello.com/1/checklists/${checklistId}?key=${key}&token=${token}`, {
         method: 'DELETE'
@@ -306,10 +316,12 @@ async function postItems(itemName, checklistId, parentNode) {
         method: 'POST'
     })
     deletingNode(parentNode)
+    console.log(parentNode)
     addingItems(checklistId, parentNode)
 }
 
 function addingItems(checklistId, checkListOl) {
+    //console.log(checkListOl)
     fetch(`https://api.trello.com/1/checklists/${checklistId}/checkItems?key=${key}&token=${token}`)
         .then((items) => {
             return items.json()
@@ -326,6 +338,7 @@ function addingItems(checklistId, checkListOl) {
                 button.appendChild(buttonText)
 
                 let checkBox = document.createElement('input')
+
                 checkBox.type = 'checkbox'
                 let text = document.createTextNode(item['name'])
                 li.appendChild(checkBox)
